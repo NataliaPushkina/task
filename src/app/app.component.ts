@@ -1,6 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from './services/api.service';
-import { map, catchError, reduce, take, skip, filter, Subscription } from 'rxjs';
+import {
+  Observable,
+  map,
+  catchError,
+  reduce,
+  take,
+  filter,
+  concatMap,
+  from,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +19,8 @@ import { map, catchError, reduce, take, skip, filter, Subscription } from 'rxjs'
 })
 export class AppComponent implements OnInit {
   title = 'tasks';
-  datesList: Array<string> = ['1', '2', '3', '4', '5', '6', '7'];
-  temperatureList: Array<number> = [1, 2, 3, 4, 5, 6, 7];
+  datesList: Array<string> = [];
+  temperatureList: Array<number> = [];
   isActiveDate: boolean = true;
   timeList: Array<string> = [
     '00:00',
@@ -22,49 +32,103 @@ export class AppComponent implements OnInit {
     '18:00',
     '21:00',
   ];
-  tempDayList: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8];
+  tempDayList: Array<number> = [];
+  o$!: Observable<any>;
 
   constructor(private _apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.getData();
-    this.getTemperature();
+    this.o$ = this._apiService.getWeather();
+    this._getData();
+    this._getTemperature();
+    this._getTempDayList();
   }
 
-  getData() {
-    return this._apiService
-      .getWeather()
+  _getData() {
+    return this.o$
       .pipe(
-        map((data) => data.hourly.time),
-          skip(23),
-          map(item => item.slice(11)),
-          take(7),
-        catchError(err => {
+        concatMap((data) =>
+          from(data.hourly.time).pipe(
+            tap((_v: any) => console.log('pipe')),
+            map((item: string) => item.slice(0, 10)),
+            filter((_value, i) => i % 24 === 0),
+            take(7)
+          )
+        ),
+        catchError((err) => {
           console.log('Error:', err);
-          throw new Error (err.name);
+          throw new Error(err.name);
         })
       )
-      .subscribe((d) => {
-        console.log(d);
-        // this.datesList = d;
-      },
-      err => console.log('Error:', err));
+      .subscribe(
+        (d) => {
+          this.datesList.push(d);
+        },
+        (err) => console.log('Error:', err)
+      );
   }
 
-  getTemperature() {
-    return this._apiService
-      .getWeather()
+  _getTemperature() {
+    return this.o$
       .pipe(
-        map((data) => data.hourly.temperature_2m),
-        // reduce((accumulator, currentValue) => (accumulator + currentValue) / 23),
-        catchError(err => {
-          console.log('Error:', err);
-          throw new Error (err.name);
-        })
+        concatMap((data) =>
+          from(data.hourly.temperature_2m).pipe(
+            tap((v: any) => console.log('pipe')),
+            reduce(
+              (p: any, c: number) => {
+                if (p[p.length - 1].length == 24) {
+                  p.push([]);
+                }
+                p[p.length - 1].push(c);
+                return p;
+              },
+              [[]]
+            )
+          )
+        )
       )
-      .subscribe((d) => {
-        console.log(d);
-      },
-      err => console.log('Error:', err));
+      .subscribe(
+        (d) => {
+          this.temperatureList = d.map((arr: [any]) =>
+            Math.round(this._averageNum(arr))
+          );
+        },
+        (err) => console.log('Error:', err)
+      );
+  }
+
+  _getTempDayList() {
+    return this.o$
+      .pipe(
+        concatMap((data) =>
+          from(data.hourly.temperature_2m).pipe(
+            tap((v: any) => console.log('pipe')),
+            take(24),
+            reduce(
+              (p: any, c: number) => {
+                if (p[p.length - 1].length == 3) {
+                  p.push([]);
+                }
+                p[p.length - 1].push(c);
+                return p;
+              },
+              [[]]
+            )
+          )
+        )
+      )
+      .subscribe(
+        (d) => {
+          console.log(d);
+          this.tempDayList = d.map((arr: [any]) =>
+            Math.round(this._averageNum(arr))
+          );
+        },
+        (err) => console.log('Error:', err)
+      );
+  }
+
+  _averageNum(arr: [any]) {
+    return arr.reduce((sum, a) => sum + a, 0) / arr.length;
   }
 }
