@@ -1,0 +1,50 @@
+.weather {
+  &__title {
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+.table {
+  margin: 30px auto;
+  border-collapse: collapse;
+  padding: 0 20px;
+  width: 100%;
+  border-spacing: 10px 0;
+  & thead th {
+    padding: 8px;
+    color: #1a202c;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #7f92ac;
+    height: 40px;
+    text-align: center;
+    background-color: rgb(250, 173, 73);
+  }
+  & tr {
+    color: #4a5568;
+    font-size: 14px;
+    text-align: center;
+    height: 40px;
+  }
+  & td {
+    border: 1px solid #7f92ac;
+  }
+  & caption {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+}
+
+button {
+  height: 40px;
+  padding: 8px;
+  color: #1a202c;
+  background-color: rgb(252, 206, 146);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  &:hover {
+    background-color: rgb(250, 173, 73);
+  }
+}
