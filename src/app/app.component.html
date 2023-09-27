@@ -1,21 +1,29 @@
 <section class="weather">
-  <button type="button" (click)="isActiveDate = !isActiveDate">Переключить режим просмотра</button>
+  <button type="button" (click)="isActiveDate = !isActiveDate">
+    Переключить режим просмотра
+  </button>
   <table class="table" *ngIf="isActiveDate">
-    <caption>Прогноз погоды по дням</caption>
+    <caption>
+      Прогноз погоды на неделю
+    </caption>
     <thead>
       <tr>
-        <th *ngFor="let date of datesList">{{ date }}</th>
+        <th *ngFor="let date of dateList">{{ date }}</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td *ngFor="let item of temperatureList">{{ item }}</td>
+        <td *ngFor="let item of temperatureWeekList$ | async">
+          {{ item | temperature }}
+        </td>
       </tr>
     </tbody>
   </table>
 
   <table class="table" *ngIf="!isActiveDate">
-    <caption>Прогноз погоды на день</caption>
+    <caption>
+      Прогноз погоды на день
+    </caption>
     <thead>
       <tr>
         <th *ngFor="let time of timeList">{{ time }}</th>
@@ -23,7 +31,9 @@
     </thead>
     <tbody>
       <tr>
-        <td *ngFor="let temp of tempDayList">{{ temp }}</td>
+        <td *ngFor="let temp of temperatureDayList$ | async">
+          {{ temp | temperature }}
+        </td>
       </tr>
     </tbody>
   </table>
