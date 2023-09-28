@@ -9,7 +9,6 @@ import {
   concatMap,
   from,
 } from 'rxjs';
-import { UtilsService } from './utils.service';
 import { WeatherInfo } from '../models/WeatherInfo';
 
 @Injectable({
@@ -22,7 +21,6 @@ export class WeatherForecastService {
 
   constructor(
     private _apiService: ApiService,
-    private _utilsService: UtilsService
   ) {
     this.apiData$ = this._apiService.getWeather();
   }
@@ -32,12 +30,12 @@ export class WeatherForecastService {
       concatMap((data) =>
         from<Array<number>>(data.hourly.temperature_2m).pipe(
           reduce(
-            (p: any, c: number) =>
-              this._utilsService.splitArrayBySize(p, c, 24),
+            (arr: any, num: number) =>
+              arr.splitArrayBySize(num, 24),
             [[]]
           ),
           map((arr: [[number]]) =>
-            arr.map((array) => Math.round(this._utilsService.averageNum(array)))
+            arr.map((arr) => Math.round(arr.averageNum()))
           )
         )
       ),
@@ -54,11 +52,11 @@ export class WeatherForecastService {
         from<Array<number>>(data.hourly.temperature_2m).pipe(
           take(24),
           reduce(
-            (p: any, c: number) => this._utilsService.splitArrayBySize(p, c, 3),
+            (arr: any, num: number) => arr.splitArrayBySize(num, 3),
             [[]]
           ),
           map((arr: [[number]]) =>
-            arr.map((array) => Math.round(this._utilsService.averageNum(array)))
+            arr.map((arr) => Math.round(arr.averageNum()))
           )
         )
       )

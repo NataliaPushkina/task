@@ -27,9 +27,9 @@ export class AppComponent implements OnInit {
     this.dateList = Array(7)
     .fill(7)
     .map((_, i) => {
-      const D = new Date();
-      D.setDate(D.getDate() + i);
-      return D.toLocaleDateString();
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      return date.toLocaleDateString();
     });
 
   }
