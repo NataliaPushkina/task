@@ -8,41 +8,46 @@
   margin: 30px auto;
   border-collapse: collapse;
   padding: 0 20px;
-  width: 100%;
+  width: 90%;
   border-spacing: 10px 0;
+  & thead {
+    background-image: linear-gradient(120deg, #fda085 0%, #f6d365 100%);
+  }
   & thead th {
     padding: 8px;
-    color: #1a202c;
+    color: #5c4040;
     font-size: 16px;
     font-weight: 500;
-    border: 1px solid #7f92ac;
+    border: 1px solid #241b17;
     height: 40px;
     text-align: center;
-    background-color: rgb(250, 173, 73);
   }
   & tr {
-    color: #4a5568;
+    color: #5c4040;
     font-size: 14px;
     text-align: center;
     height: 40px;
   }
   & td {
-    border: 1px solid #7f92ac;
+    border: 1px solid #241b17;
   }
   & caption {
-    font-size: 18px;
+    font-size: 22px;
     margin-bottom: 10px;
     font-weight: 700;
+    color: #5c4040;
   }
 }
 
 button {
   height: 40px;
   padding: 8px;
-  color: #1a202c;
-  background-color: rgb(252, 206, 146);
+  margin: 10px;
+  color: #5c4040;
+  background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
   border: none;
   border-radius: 10px;
+  font-size: 14px;
   cursor: pointer;
   &:hover {
     background-color: rgb(250, 173, 73);
